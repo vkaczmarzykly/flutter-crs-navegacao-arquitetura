@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fokus/app/enums/timer_type.dart';
-import 'package:fokus/app/pages/timer_page.dart';
 import '../utils/app_config.dart';
 
 class HomePage extends StatelessWidget {
@@ -63,12 +62,10 @@ class HomePage extends StatelessWidget {
                     height: 56,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushNamed(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                TimerPage(timerType: TimerType.shortBreak),
-                          ),
+                          '/timer',
+                          arguments: TimerType.shortBreak,
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -94,12 +91,10 @@ class HomePage extends StatelessWidget {
                     height: 56,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushNamed(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                TimerPage(timerType: TimerType.longBreak),
-                          ),
+                          '/timer',
+                          arguments: TimerType.longBreak,
                         );
                       },
                       style: ElevatedButton.styleFrom(
