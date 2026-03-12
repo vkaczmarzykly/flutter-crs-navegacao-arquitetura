@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'dart:async';
 import 'package:fokus/app/utils/app_config.dart';
 
 class TimerWidget extends StatefulWidget {
@@ -12,9 +12,41 @@ class TimerWidget extends StatefulWidget {
 }
 
 class _TimerWidgetState extends State<TimerWidget> {
+  bool isPlaying = false;
+  Timer? timer;
+  Duration duration = Duration.zero;
+
+  void startTimer() {
+
+    setState  (() {
+      duration = Duration.zero;
+    });
+
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (duration.inMinutes < widget.initialMinutes) {
+          duration += Duration(seconds: 1);
+        } else {
+          timer.cancel();
+          isPlaying = false;
+        }
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+
+    setState(() {
+      isPlaying = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -33,7 +65,7 @@ class _TimerWidgetState extends State<TimerWidget> {
         children: [
           // Timer
           Text(
-            "00:00",
+            "${duration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(duration.inSeconds.remainder(60)).toString().padLeft(2, '0')}",
             style: TextStyle(
               fontSize: 72,
               fontWeight: FontWeight.bold,
@@ -48,9 +80,19 @@ class _TimerWidgetState extends State<TimerWidget> {
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  isPlaying = !isPlaying;
+                });
+
+                if (isPlaying) {
+                  startTimer();
+                } else {
+                  timer?.cancel();
+                }
+              },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppConfig.buttonColor,
+                backgroundColor: isPlaying ? Colors.red : AppConfig.buttonColor,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 30,
@@ -63,10 +105,13 @@ class _TimerWidgetState extends State<TimerWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.play_arrow, color: AppConfig.backgroundColor),
+                  Icon(
+                    isPlaying ? Icons.stop : Icons.play_arrow,
+                    color: AppConfig.backgroundColor,
+                  ),
                   const SizedBox(width: 10),
                   Text(
-                    "Iniciar",
+                    isPlaying ? 'Pausar' : 'Iniciar',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
